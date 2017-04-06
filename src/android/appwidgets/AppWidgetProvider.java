@@ -6,6 +6,7 @@ package run.ace;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +22,11 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 	protected abstract int getItemResourceId(Context context);
 	protected abstract int getItemTextResourceId(Context context);
 	protected abstract int getItemLayoutResourceId(Context context);
+	protected abstract int getItemBackgroundResourceId(Context context);
+	protected abstract int getItemBackground2ResourceId(Context context);
+	protected abstract int getItemBackground3ResourceId(Context context);
+	protected abstract int getItemBackground4ResourceId(Context context);
+
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
@@ -46,10 +52,26 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 				Intent onClickIntent = new Intent(context, Class.forName(context.getPackageName() + ".MainActivity"));
 				onClickIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-	            int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
+	            int viewIndex = intent.getIntExtra("position", 0);
+                String action = intent.getStringExtra("action");
+                String cible = intent.getStringExtra("cible");
+                int state = intent.getIntExtra("state", 0);
+                int appWidgetId = intent.getIntExtra("appWidgetId", 0);
+                int viewResourceId = intent.getIntExtra("viewResourceId", 0);
+
+                AppWidgetData.changeState(viewIndex);
+
 				onClickIntent.putExtra("widgetSelectionIndex", viewIndex);
+                onClickIntent.putExtra("widgetSelectionAction", action);
+				onClickIntent.putExtra("widgetSelectionCible", cible);
+				onClickIntent.putExtra("widgetSelectionState", AppWidgetData.getState(viewIndex));
+
+
+
 
 				context.startActivity(onClickIntent);
+
+                mgr.notifyAppWidgetViewDataChanged(appWidgetId, viewResourceId);
 			}
 			catch (Exception ex)
 			{
@@ -68,8 +90,13 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
             Intent intent = new Intent(context, AppWidgetService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
             intent.putExtra("widgetItemId", getItemResourceId(context));
+            intent.putExtra("widgetViewId", getViewResourceId(context));
             intent.putExtra("widgetItemTextId", getItemTextResourceId(context));
             intent.putExtra("widgetItemLayoutId", getItemLayoutResourceId(context));
+            intent.putExtra("widgetItemBackgroundId", getItemBackgroundResourceId(context));
+            intent.putExtra("widgetItemBackground2Id", getItemBackground2ResourceId(context));
+            intent.putExtra("widgetItemBackground3Id", getItemBackground3ResourceId(context));
+            intent.putExtra("widgetItemBackground4Id", getItemBackground4ResourceId(context));
 
 			// Encode the extras into the data so it's not ignored when intents are compared
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -89,6 +116,11 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
             rv.setPendingIntentTemplate(getViewResourceId(context), toastPendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
+
+             //Toast.makeText(context, "SampleRemoteViewsFactory._appWidgetId", Toast.LENGTH_LONG).show();
+              //Toast.makeText(context, SampleRemoteViewsFactory._itemLayoutResourceId, Toast.LENGTH_LONG).show();
+            //appWidgetManager.notifyAppWidgetViewDataChanged(SampleRemoteViewsFactory._appWidgetId, SampleRemoteViewsFactory._itemLayoutResourceId);
+
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }

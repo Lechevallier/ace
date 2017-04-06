@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import android.graphics.Color;
+import org.json.*;
 
 public class AppWidgetService extends RemoteViewsService {
     @Override
@@ -21,20 +23,38 @@ public class AppWidgetService extends RemoteViewsService {
 class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     Context _context;
 	int _appWidgetId;
-	int _itemResourceId;
+    int _itemResourceId;
+	int _viewResourceId;
 	int _itemTextResourceId;
 	int _itemLayoutResourceId;
+    int _itemBackgroundResourceId;
+    int _itemBackground2ResourceId;
+    int _itemBackground3ResourceId;
+    int _itemBackground4ResourceId;
 
     public SampleRemoteViewsFactory(Context context, Intent intent) {
         _context = context;
         _appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         _itemResourceId = intent.getIntExtra("widgetItemId", -1);
+        _viewResourceId = intent.getIntExtra("widgetViewId", -1);
         _itemTextResourceId = intent.getIntExtra("widgetItemTextId", -1);
         _itemLayoutResourceId = intent.getIntExtra("widgetItemLayoutId", -1);
+        _itemBackgroundResourceId = intent.getIntExtra("widgetItemBackgroundId", -1);
+        _itemBackground2ResourceId = intent.getIntExtra("widgetItemBackground2Id", -1);
+        _itemBackground3ResourceId = intent.getIntExtra("widgetItemBackground3Id", -1);
+        _itemBackground4ResourceId = intent.getIntExtra("widgetItemBackground4Id", -1);
     }
 
     public void onCreate() {
-		AppWidgetData.add("Run the app to populate this widget.", _context);
+        /*try {
+            JSONObject actionData = new JSONObject();
+            actionData.put("name", "Open the app to populate the widget");
+            actionData.put("target", "none");
+            actionData.put("state", 0);
+    		AppWidgetData.add(actionData.toString(), _context);
+        } catch (JSONException e) {
+            System.out.println(e);
+        }*/
 		// TODO: Should we refresh data on app resume in some cases?
     }
 
@@ -48,12 +68,28 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
 
     public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(_context.getPackageName(), _itemLayoutResourceId);
-        rv.setTextViewText(_itemTextResourceId, AppWidgetData.get(position));
+        String action = AppWidgetData.getAction(position);
+        String cible = AppWidgetData.getCible(position);
+        int state = AppWidgetData.getState(position);
 
-        Bundle extras = new Bundle();
-        extras.putInt(AppWidgetProvider.EXTRA_ITEM, position);
+        int backgroundId =  _itemBackgroundResourceId;
+        if(action.equals("light")){
+            backgroundId = (state == 0) ? _itemBackgroundResourceId : _itemBackground2ResourceId;
+        }else if(action.equals("gate")){
+            backgroundId = (state == 0) ? _itemBackground3ResourceId : _itemBackground4ResourceId;
+        }
+        rv.setInt(_itemTextResourceId, "setBackgroundResource", backgroundId);
+        rv.setTextViewText(_itemTextResourceId, cible);
+
+        // Bundle extras = new Bundle();
+        // extras.putInt(AppWidgetProvider.EXTRA_ITEM, position);
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtras(extras);
+        fillInIntent.putExtra("position", position);
+        fillInIntent.putExtra("action", action);
+        fillInIntent.putExtra("cible", cible);
+        fillInIntent.putExtra("state", state);
+        fillInIntent.putExtra("appWidgetId", _appWidgetId);
+        fillInIntent.putExtra("viewResourceId", _viewResourceId);
         rv.setOnClickFillInIntent(_itemResourceId, fillInIntent);
 
         return rv;

@@ -25,7 +25,7 @@ module.exports = {
             }
         });
     },
-    
+
     getContext: function () {
         if (!context)
             context = new ace.KnownNativeObject("android.content.Context");
@@ -56,11 +56,11 @@ module.exports = {
         clear: function() {
             ace.NativeObject.invoke("run.ace.AppWidgetData", "clear");
         },
-        add: function(text) {
-            ace.NativeObject.invoke("run.ace.AppWidgetData", "add", text, ace.android.getContext());
+        add: function(actionData) {
+            ace.NativeObject.invoke("run.ace.AppWidgetData", "add", actionData, ace.android.getContext());
         }
     },
-    
+
     version: {
         BASE: 1,
         BASE_1_1: 2,
