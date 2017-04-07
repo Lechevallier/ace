@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+import org.json.*;
 
 public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvider {
     public static final String TOAST_ACTION = "run.ace.TOAST_ACTION";
@@ -24,6 +25,7 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 	protected abstract int getItemImageResourceId(Context context);
 	protected abstract int getItemLayoutResourceId(Context context);
 	protected abstract int getItemBackgroundResourceId(Context context);
+	protected abstract int getItemBackground1ResourceId(Context context);
 	protected abstract int getItemBackground2ResourceId(Context context);
 	protected abstract int getItemBackground3ResourceId(Context context);
 	protected abstract int getItemBackground4ResourceId(Context context);
@@ -36,11 +38,21 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 
     @Override
     public void onDisabled(Context context) {
+        AppWidgetData.clear();
         super.onDisabled(context);
     }
 
     @Override
     public void onEnabled(Context context) {
+        try {
+            JSONObject actionData = new JSONObject();
+            actionData.put("name", "");
+            actionData.put("target", "Open app");
+            actionData.put("state", 0);
+    		AppWidgetData.add(actionData.toString(), context);
+        } catch (JSONException e) {
+            System.out.println(e);
+        }
         super.onEnabled(context);
     }
 
@@ -57,7 +69,7 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
                 String action = intent.getStringExtra("action");
                 String cible = intent.getStringExtra("cible");
                 int state = intent.getIntExtra("state", 0);
-                int appWidgetId = intent.getIntExtra("appWidgetId", 0);
+                //int appWidgetId = intent.getIntExtra("appWidgetId", 0);
                 int viewResourceId = intent.getIntExtra("viewResourceId", 0);
 
                 AppWidgetData.changeState(viewIndex);
@@ -67,16 +79,16 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 				onClickIntent.putExtra("widgetSelectionCible", cible);
 				onClickIntent.putExtra("widgetSelectionState", AppWidgetData.getState(viewIndex));
 
-
-
-
 				context.startActivity(onClickIntent);
 
-                mgr.notifyAppWidgetViewDataChanged(appWidgetId, viewResourceId);
+                int[] ids = mgr.getAppWidgetIds(new ComponentName(context, AppWidgetProvider.class)); 
+                for (int appWidgetId : appWidgetIds) {
+                    mgr.notifyAppWidgetViewDataChanged(appWidgetId, viewResourceId);
+                }
 			}
 			catch (Exception ex)
 			{
-	            Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+	            Toast.makeText(context, ex.toString() + "Open the app first to load data", Toast.LENGTH_LONG).show();
 			}
         }
         super.onReceive(context, intent);
@@ -96,6 +108,7 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
             intent.putExtra("widgetItemImageId", getItemImageResourceId(context));
             intent.putExtra("widgetItemLayoutId", getItemLayoutResourceId(context));
             intent.putExtra("widgetItemBackgroundId", getItemBackgroundResourceId(context));
+            intent.putExtra("widgetItemBackground1Id", getItemBackground1ResourceId(context));
             intent.putExtra("widgetItemBackground2Id", getItemBackground2ResourceId(context));
             intent.putExtra("widgetItemBackground3Id", getItemBackground3ResourceId(context));
             intent.putExtra("widgetItemBackground4Id", getItemBackground4ResourceId(context));

@@ -63,6 +63,8 @@ public class AppWidgetData {
 
 	public static void clear() {
 		_actions.clear();
+    _cibles.clear();
+    _states.clear();
 	}
 
 	public static int getCount() {

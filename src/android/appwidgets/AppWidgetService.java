@@ -29,6 +29,7 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
     int _itemImageResourceId;
     int _itemLayoutResourceId;
     int _itemBackgroundResourceId;
+    int _itemBackground1ResourceId;
     int _itemBackground2ResourceId;
     int _itemBackground3ResourceId;
     int _itemBackground4ResourceId;
@@ -42,26 +43,18 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         _itemImageResourceId = intent.getIntExtra("widgetItemImageId", -1);
         _itemLayoutResourceId = intent.getIntExtra("widgetItemLayoutId", -1);
         _itemBackgroundResourceId = intent.getIntExtra("widgetItemBackgroundId", -1);
+        _itemBackground1ResourceId = intent.getIntExtra("widgetItemBackground1Id", -1);
         _itemBackground2ResourceId = intent.getIntExtra("widgetItemBackground2Id", -1);
         _itemBackground3ResourceId = intent.getIntExtra("widgetItemBackground3Id", -1);
         _itemBackground4ResourceId = intent.getIntExtra("widgetItemBackground4Id", -1);
     }
 
     public void onCreate() {
-        /*try {
-            JSONObject actionData = new JSONObject();
-            actionData.put("name", "Open the app to populate the widget");
-            actionData.put("target", "none");
-            actionData.put("state", 0);
-    		AppWidgetData.add(actionData.toString(), _context);
-        } catch (JSONException e) {
-            System.out.println(e);
-        }*/
 		// TODO: Should we refresh data on app resume in some cases?
     }
 
     public void onDestroy() {
-        AppWidgetData.clear();
+        //AppWidgetData.clear();
     }
 
     public int getCount() {
@@ -76,12 +69,12 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
 
         int backgroundId =  _itemBackgroundResourceId;
         if(action.equals("Lamp")){
-            backgroundId = (state == 0) ? _itemBackgroundResourceId : _itemBackground2ResourceId;
+            backgroundId = (state == 1) ? _itemBackground1ResourceId : _itemBackground2ResourceId;
         }else if(action.equals("Shutters")){
-            backgroundId = (state == 0) ? _itemBackground3ResourceId : _itemBackground4ResourceId;
+            backgroundId = (state == 1) ? _itemBackground3ResourceId : _itemBackground4ResourceId;
         }
         rv.setInt(_itemImageResourceId, "setImageResource", backgroundId);
-        int color = (state == 0 && action.equals("Lamp")) ? Color.argb(255, 255, 200, 60) : Color.argb(255, 0, 0, 0);
+        int color = (state == 1 && action.equals("Lamp")) ? Color.argb(255, 255, 200, 60) : Color.argb(255, 0, 0, 0);
         rv.setInt(_itemImageResourceId, "setColorFilter",  color);
         rv.setTextViewText(_itemTextResourceId, cible);
 
