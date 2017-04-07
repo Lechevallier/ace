@@ -75,13 +75,13 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         int state = AppWidgetData.getState(position);
 
         int backgroundId =  _itemBackgroundResourceId;
-        if(action.equals("light")){
+        if(action.equals("Lamp")){
             backgroundId = (state == 0) ? _itemBackgroundResourceId : _itemBackground2ResourceId;
-        }else if(action.equals("gate")){
+        }else if(action.equals("Shutters")){
             backgroundId = (state == 0) ? _itemBackground3ResourceId : _itemBackground4ResourceId;
         }
         rv.setInt(_itemImageResourceId, "setImageResource", backgroundId);
-        int color = (state == 0) ? Color.argb(255, 255, 200, 60) : Color.argb(255, 0, 0, 0);
+        int color = (state == 0 && action.equals("Lamp")) ? Color.argb(255, 255, 200, 60) : Color.argb(255, 0, 0, 0);
         rv.setInt(_itemImageResourceId, "setColorFilter",  color);
         rv.setTextViewText(_itemTextResourceId, cible);
 
