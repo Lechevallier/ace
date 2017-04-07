@@ -69,7 +69,7 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
                 String action = intent.getStringExtra("action");
                 String cible = intent.getStringExtra("cible");
                 int state = intent.getIntExtra("state", 0);
-                //int appWidgetId = intent.getIntExtra("appWidgetId", 0);
+                int appWidgetId = intent.getIntExtra("appWidgetId", 0);
                 int viewResourceId = intent.getIntExtra("viewResourceId", 0);
 
                 AppWidgetData.changeState(viewIndex);
@@ -79,16 +79,16 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 				onClickIntent.putExtra("widgetSelectionCible", cible);
 				onClickIntent.putExtra("widgetSelectionState", AppWidgetData.getState(viewIndex));
 
-				context.startActivity(onClickIntent);
 
-                int[] ids = mgr.getAppWidgetIds(new ComponentName(context, AppWidgetProvider.class)); 
-                for (int appWidgetId : appWidgetIds) {
-                    mgr.notifyAppWidgetViewDataChanged(appWidgetId, viewResourceId);
-                }
+
+
+				context.startActivity(onClickIntent);
+                
+                mgr.notifyAppWidgetViewDataChanged(appWidgetId, viewResourceId);
 			}
 			catch (Exception ex)
 			{
-	            Toast.makeText(context, ex.toString() + "Open the app first to load data", Toast.LENGTH_LONG).show();
+	            Toast.makeText(context, "Open the app first to load data", Toast.LENGTH_LONG).show();
 			}
         }
         super.onReceive(context, intent);
