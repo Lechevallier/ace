@@ -21,6 +21,7 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
 	protected abstract int getViewResourceId(Context context);
 	protected abstract int getItemResourceId(Context context);
 	protected abstract int getItemTextResourceId(Context context);
+	protected abstract int getItemImageResourceId(Context context);
 	protected abstract int getItemLayoutResourceId(Context context);
 	protected abstract int getItemBackgroundResourceId(Context context);
 	protected abstract int getItemBackground2ResourceId(Context context);
@@ -92,6 +93,7 @@ public abstract class AppWidgetProvider extends android.appwidget.AppWidgetProvi
             intent.putExtra("widgetItemId", getItemResourceId(context));
             intent.putExtra("widgetViewId", getViewResourceId(context));
             intent.putExtra("widgetItemTextId", getItemTextResourceId(context));
+            intent.putExtra("widgetItemImageId", getItemImageResourceId(context));
             intent.putExtra("widgetItemLayoutId", getItemLayoutResourceId(context));
             intent.putExtra("widgetItemBackgroundId", getItemBackgroundResourceId(context));
             intent.putExtra("widgetItemBackground2Id", getItemBackground2ResourceId(context));

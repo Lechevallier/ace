@@ -22,11 +22,12 @@ public class AppWidgetService extends RemoteViewsService {
 
 class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     Context _context;
-	int _appWidgetId;
+    int _appWidgetId;
     int _itemResourceId;
-	int _viewResourceId;
-	int _itemTextResourceId;
-	int _itemLayoutResourceId;
+    int _viewResourceId;
+    int _itemTextResourceId;
+    int _itemImageResourceId;
+    int _itemLayoutResourceId;
     int _itemBackgroundResourceId;
     int _itemBackground2ResourceId;
     int _itemBackground3ResourceId;
@@ -38,6 +39,7 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         _itemResourceId = intent.getIntExtra("widgetItemId", -1);
         _viewResourceId = intent.getIntExtra("widgetViewId", -1);
         _itemTextResourceId = intent.getIntExtra("widgetItemTextId", -1);
+        _itemImageResourceId = intent.getIntExtra("widgetItemImageId", -1);
         _itemLayoutResourceId = intent.getIntExtra("widgetItemLayoutId", -1);
         _itemBackgroundResourceId = intent.getIntExtra("widgetItemBackgroundId", -1);
         _itemBackground2ResourceId = intent.getIntExtra("widgetItemBackground2Id", -1);
@@ -78,7 +80,9 @@ class SampleRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory 
         }else if(action.equals("gate")){
             backgroundId = (state == 0) ? _itemBackground3ResourceId : _itemBackground4ResourceId;
         }
-        rv.setInt(_itemTextResourceId, "setBackgroundResource", backgroundId);
+        rv.setInt(_itemImageResourceId, "setImageResource", backgroundId);
+        int color = (state == 0) ? Color.argb(255, 255, 200, 60) : Color.argb(255, 0, 0, 0);
+        rv.setInt(_itemImageResourceId, "setColorFilter",  color);
         rv.setTextViewText(_itemTextResourceId, cible);
 
         // Bundle extras = new Bundle();
